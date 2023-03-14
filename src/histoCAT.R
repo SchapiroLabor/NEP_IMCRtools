@@ -6,8 +6,7 @@ library(SingleCellExperiment)
 library(readr)
 library(SpatialExperiment)
 library(tidyverse)
-library(ggplot2)
-library(ggraph)
+
 
 # load in data
 getwd()
@@ -21,6 +20,7 @@ for (i in files){
   data_list[[i]] <- readr::read_csv(paste0(data_path,i))
 }
 
+sessionInfo()
 
 #add image id name
 data_list = Map(cbind, data_list, img_id = names(data_list))
@@ -70,12 +70,12 @@ spe <- aggregateNeighbors(spe,
                           count_by = "ct") 
 head(spe$aggregatedNeighbors)
 
-out <- countInteractions(spe,
+out_knn <- countInteractions(spe,
                          group_by = "img_id",
                          label = "ct",
                          method = "histocat",
-                         patch_size = 2,
-                         colPairName = "delaunay_interaction_graph")
+                         #patch_size = 2,
+                         colPairName = "knn_interaction_graph")
 
 out <- testInteractions(spe,
                         group_by = "img_id",

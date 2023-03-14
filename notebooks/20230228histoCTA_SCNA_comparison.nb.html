@@ -1755,31 +1755,18 @@ display: none;
 <p>Continue with output file from inital histocat script</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHJ5ID0gYXMuZGF0YS5mcmFtZShvdXQpICU+JSBzZWxlY3QoZnJvbV9sYWJlbCwgdG9fbGFiZWwsIHBfbHQsIGdyb3VwX2J5KVxudGFibGUodHJ5JGdyb3VwX2J5KVxuXG4jIyMgRnJvbSBoZXJlIGstbWVhbnMsIGJ1dCByYXRoZXIgdHJ5IGhpZXJhcmNoaWNhbCBjbHVzdGVyaW5nXG50cnkka2V5ID0gcGFzdGUodHJ5JGZyb21fbGFiZWwsIHRyeSR0b19sYWJlbCwgc2VwID0gXCJfXCIpXG50cnkgPSB0cnkgJT4lIHNlbGVjdCgtYyhmcm9tX2xhYmVsLCB0b19sYWJlbCkpXG5cbnRyeSA9IHNwcmVhZCh0cnksIGtleSA9IGtleSwgdmFsdWUgPSBwX2x0KVxuXG5saWJyYXJ5KGdncGxvdDIpXG5saWJyYXJ5KHBoZWF0bWFwKVxuXG5yb3duYW1lcyh0cnkpID0gdHJ5JGdyb3VwX2J5XG5waGVhdG1hcCh0cnlbLC0xXSwgdHJlZWhlaWdodF9yb3cgPSAwLCB0cmVlaGVpZ2h0X2NvbCA9IDApXG5waGVhdG1hcCh0cnlbLC0xXSwga21lYW5zX2sgPSAyLCB0cmVlaGVpZ2h0X3JvdyA9IDAsIHRyZWVoZWlnaHRfY29sID0gMClcblxucGhlYXRtYXAodHJ5WywtMV0sIGNsdXN0ZXJpbmdfZGlzdGFuY2Vfcm93cz1cImV1Y2xpZGVhblwiLCBjbHVzdGVyaW5nX21ldGhvZD1cIm1lZGlhblwiLCBcbiAgICAgICAgIGttZWFuc19rID0gMiwgc2hvd19yb3duYW1lcz1UUlVFKVxuXG5rbSA8LSBrbWVhbnModHJ5WywtMV0sIGNlbnRlcnM9MilcbmNsdXN0ZXJfYXNzaWdubWVudHMgPC0ga20kY2x1c3RlclxucmVzdWx0ID0gY2JpbmQodHJ5WywxXSxjbHVzdGVyX2Fzc2lnbm1lbnRzKVxuXG5cblxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudHJ5ID0gYXMuZGF0YS5mcmFtZShvdXQpICU+JSBzZWxlY3QoZnJvbV9sYWJlbCwgdG9fbGFiZWwsIHBfbHQsIGdyb3VwX2J5KVxuXG5gYGAifQ== -->
 <pre class="r"><code>try = as.data.frame(out) %&gt;% select(from_label, to_label, p_lt, group_by)
-table(try$group_by)
-
-### From here k-means, but rather try hierarchical clustering
-try$key = paste(try$from_label, try$to_label, sep = &quot;_&quot;)
-try = try %&gt;% select(-c(from_label, to_label))
-
-try = spread(try, key = key, value = p_lt)
-
-library(ggplot2)
-library(pheatmap)
-
-rownames(try) = try$group_by
-pheatmap(try[,-1], treeheight_row = 0, treeheight_col = 0)
-pheatmap(try[,-1], kmeans_k = 2, treeheight_row = 0, treeheight_col = 0)
-
-pheatmap(try[,-1], clustering_distance_rows=&quot;euclidean&quot;, clustering_method=&quot;median&quot;, 
-         kmeans_k = 2, show_rownames=TRUE)
-
-km &lt;- kmeans(try[,-1], centers=2)
-cluster_assignments &lt;- km$cluster
-result = cbind(try[,1],cluster_assignments)
 </code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gYHNlbGVjdCgpYDpcbiEgQ2FuJ3Qgc3Vic2V0IGNvbHVtbnMgdGhhdCBkb24ndCBleGlzdC5cbuKcliBDb2x1bW4gYHBfbHRgIGRvZXNuJ3QgZXhpc3QuXG5CYWNrdHJhY2U6XG4gMS4gYXMuZGF0YS5mcmFtZShvdXQpICU+JSAuLi5cbiAzLiBkcGx5cjo6OnNlbGVjdC5kYXRhLmZyYW1lKC4sIGZyb21fbGFiZWwsIHRvX2xhYmVsLCBwX2x0LCBncm91cF9ieSlcbiJ9 -->
+<pre><code>Error in `select()`:
+! Can&#39;t subset columns that don&#39;t exist.
+✖ Column `p_lt` doesn&#39;t exist.
+Backtrace:
+ 1. as.data.frame(out) %&gt;% ...
+ 3. dplyr:::select.data.frame(., from_label, to_label, p_lt, group_by)</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
