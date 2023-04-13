@@ -20,7 +20,7 @@ for (i in files){
   data_list[[i]] <- readr::read_csv(paste0(data_path,i))
 }
 
-sessionInfo()
+#sessionInfo()
 
 #add image id name
 data_list = Map(cbind, data_list, img_id = names(data_list))
@@ -42,25 +42,25 @@ spe = SpatialExperiment(assay=as.data.frame(t(df)),
 )
 
 
-spe <- buildSpatialGraph(spe, img_id = "img_id",
-                         type = "expansion",
-                         threshold = 20,
-                         coords = c("x", "y"))
-spe <- buildSpatialGraph(spe, img_id = "img_id",
-                         type = "knn",
-                         k = 20,
-                         coords = c("x", "y")) 
+#spe <- buildSpatialGraph(spe, img_id = "img_id",
+#                         type = "expansion",
+#                         threshold = 20,
+#                         coords = c("x", "y"))
+#spe <- buildSpatialGraph(spe, img_id = "img_id",
+#                         type = "knn",
+#                         k = 5,
+#                         coords = c("x", "y")) 
 spe <- buildSpatialGraph(spe, img_id = "img_id",
                          type = "delaunay",
                          coords = c("x", "y"))
 
 assayNames(spe) = "expr"
 
-spe <- aggregateNeighbors(spe,
-                          colPairName = "knn_interaction_graph",
-                          aggregate_by = "expression",
-                          assay_type = "expr"
-)
+#spe <- aggregateNeighbors(spe,
+#                          colPairName = "knn_interaction_graph",
+#                          aggregate_by = "expression",
+#                          assay_type = "expr"
+#)
 
 #head(spe$mean_aggregatedExpression)
 
@@ -68,21 +68,32 @@ spe <- aggregateNeighbors(spe,
                           colPairName = "delaunay_interaction_graph",
                           aggregate_by = "metadata",
                           count_by = "ct") 
-head(spe$aggregatedNeighbors)
 
-out_knn <- countInteractions(spe,
-                         group_by = "img_id",
-                         label = "ct",
-                         method = "histocat",
-                         #patch_size = 2,
-                         colPairName = "knn_interaction_graph")
+#spe <- aggregateNeighbors(spe,
+ #                         colPairName = "knn_interaction_graph",
+ #                         aggregate_by = "metadata",
+ #                         count_by = "ct") 
+#head(spe$aggregatedNeighbors)
+
+#out_knn <- countInteractions(spe,
+#                         group_by = "img_id",
+#                         label = "ct",
+#                         method = "histocat",
+#                         #patch_size = 2,
+#                         colPairName = "knn_interaction_graph")
+
+out <- countInteractions(spe,
+                             group_by = "img_id",
+                             label = "ct",
+                             method = "histocat",
+                             #patch_size = 2,
+                             colPairName = "delaunay_interaction_graph")
 
 out <- testInteractions(spe,
                         group_by = "img_id",
                         label = "ct",
                         method = "histocat",
                         colPairName = "delaunay_interaction_graph")
-
 
 write.csv(out,file=paste0("./../../output/histocat_output.csv"),row.names = TRUE)
 

@@ -1,0 +1,131 @@
+---
+title: "histoCAT_SCNA_comparison"
+output: html_notebook
+---
+Continue with output file from inital histocat script
+
+```{r}
+try = as.data.frame(out) %>% select(from_label, to_label, p_lt, group_by)
+table(try$group_by)
+
+### From here k-means, but rather try hierarchical clustering
+try$key = paste(try$from_label, try$to_label, sep = "_")
+try = try %>% select(-c(from_label, to_label))
+
+try = spread(try, key = key, value = p_lt)
+
+library(ggplot2)
+library(pheatmap)
+
+rownames(try) = try$group_by
+pheatmap(try[,-1], treeheight_row = 0, treeheight_col = 0)
+
+
+pheatmap(try[,-1], kmeans_k = 3, treeheight_row = 0, treeheight_col = 0)
+
+pheatmap(try[,-1], clustering_distance_rows="euclidean", clustering_method="median", 
+         kmeans_k = 3, show_rownames=TRUE)
+
+km <- kmeans(try[,-1], centers=3)
+cluster_assignments <- km$cluster
+result = cbind(try[,1],cluster_assignments)
+
+label = rep(c("random","self_0.6", "self_0.4"), each=20)
+table(result[,2], label)
+
+
+result[,2][result[,2] == "3"] <- "random"
+result[,2][result[,2] == "2"] <- "self_0.6"
+result[,2][result[,2] == "1"] <- "self_0.4"
+library(caret)
+3 = confusionMatrix(as.factor(as.vector(result[,2])), as.factor(label))
+# look for accuraxy
+
+
+```
+Create ground truth vector and compare
+```{r}
+
+vec_self = c(0.60, 0.13, 0.13, 0.14, 0.13, 0.29, 0.29, 0.29, 0.13, 0.29, 0.29, 0.29, 0.14, 0.29, 0.29, 0.28)
+vec_ran = c(0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25)
+
+# create long vector with ground_truth for compoete dataset
+vec_self_l = rep(vec_self, times = 20)
+vec_ran_l = rep(vec_ran, times = 20)
+
+vec_truth = c(vec_ran_l, vec_self_l)
+
+# create matrix as ground truth
+
+m = matrix(vec_self, nrow=20, ncol=length(vec_self), byrow=TRUE)
+m2 = matrix(vec_ran, nrow=20, ncol=length(vec_ran), byrow=TRUE)
+
+m_true = rbind(m2, m)
+
+```
+Calculate cosine similarity to these ground-truth vectors
+```{r}
+library(lsa)
+cosine(vec_self, vec_ran)
+mat = as.matrix(try[,-1])
+# comparing to self ground truth is okay, but comparing to random vector is not well
+
+res = apply(mat, 1, function(x) cosine(x,vec_self))
+res_ran = apply(mat, 1, function(x) cosine(x,vec_ran))
+
+
+
+```
+
+compare complete truth vector 
+```{r}
+vec_anal = as.vector(t(mat))
+vec_fake = c(vec_self_l, vec_self_l)
+
+cosine(vec_anal, vec_truth)
+cosine(vec_anal, vec_fake)
+cor(vec_anal, vec_truth,method = "spearman")
+cor(vec_anal, vec_fake,method = "spearman")
+
+plot(vec_anal, vec_truth)
+plot(vec_anal, vec_fake)
+```
+Methods to use for similarity tesing:
+1. Pearson correlation coefficient: This measures the linear relationship between two continuous variables. It is calculated as the covariance between the two variables divided by the product of their standard deviations. A value of 1 indicates a perfect positive correlation, 0 indicates no correlation, and -1 indicates a perfect negative correlation.
+
+2. Spearman rank correlation coefficient: This measures the monotonic relationship between two continuous or ordinal variables. It is calculated as the Pearson correlation coefficient between the ranked values of the two variables. It ranges between -1 and 1, where 1 indicates a perfect monotonic relationship, 0 indicates no monotonic relationship, and -1 indicates a perfect negative monotonic relationship.
+
+3. Euclidean distance: This measures the distance between two points in a multidimensional space. In your case, each point corresponds to an interaction in the matrix, and the distance between two points is the square root of the sum of the squared differences between their coordinates.
+
+4. Cosine similarity: This measures the cosine of the angle between two vectors in a multidimensional space. In your case, each vector corresponds to a row or column in the matrix, and the similarity between two vectors is the cosine of the angle between them.
+```{r}
+dist_mat = dist(rbind(mat, m_true), method = "euclidean")
+cor(mat, m_true)
+```
+
+
+
+I want to only have one value doing that.
+
+Frobenius norm
+```{r}
+#mat, m_true
+
+cos_sim <- sum(mat * m_true) / (sqrt(sum(mat^2)) * sqrt(sum(m_true^2)))
+
+print(cos_sim)
+```
+
+If you want to compare two matrices based on their overall patterns or structure, cosine similarity is a sensible choice. However, if you want to compare the matrices based on their exact values, then a distance measure like the Frobenius norm may be more appropriate.
+
+
+
+
+
+
+
+
+
+
+
+
