@@ -11,12 +11,11 @@ library(tidyverse)
 # load in data
 getwd()
 
-files = list.files("./../../../../data/Sim_100_equal4/", pattern = ".csv")
-data_path = "./../../../../data/Sim_100_equal4/"
+files = list.files("./../../../../data/Sim_100_asym_01/", pattern = ".csv")
+data_path = "./../../../../data/Sim_100_asym_01/"
 data_list = list()
 
 for (i in files){
-  print(i)
   data_list[[i]] <- readr::read_csv(paste0(data_path,i))
 }
 
@@ -95,22 +94,22 @@ out <- testInteractions(spe,
                         method = "histocat",
                         colPairName = "delaunay_interaction_graph")
 
-write.csv(out,file=paste0("./../../output/histocat_output_equal100.csv"),row.names = TRUE)
+#write.csv(out,file=paste0("./../../output/histocat_output_sim_100_01pref.csv"),row.names = TRUE)
 
 
 ## create standard matrix for comparison
-data = as.data.frame(out) %>% select(from_label, to_label, ct, group_by)
+data = as.data.frame(out) %>% select(from_label, to_label, p_lt, group_by)
 
 data$key = paste(data$from_label, data$to_label, sep = "_")
 data = data %>% select(-c(from_label, to_label))
 
-data = spread(data, key = key, value = ct)
+data = spread(data, key = key, value = p_lt)
 
 
 rownames(data) = data$group_by
 data = data[,-1]
 
-write.csv(data,"./../../../Comparison/results/histoCAT_delaunay_ct_sim100_equal4.csv")
+write.csv(data,"./../../../Comparison/results_4ct_cross01/IMCR_histoCAT_delaunay_p_lt_4ct_cross01.csv")
 
 
 #ggplot(as.data.frame(out), aes(from_label, to_label, fill = sigval)) +
