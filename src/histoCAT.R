@@ -7,19 +7,17 @@ library(readr)
 library(SpatialExperiment)
 library(tidyverse)
 
-
+### This script runs IMCRtools histoCAT or classic for extracting interaction by sample matrices
 # load in data
-getwd()
 
-files = list.files("./../../../../data/Sim_100_asym_01/", pattern = ".csv")
-data_path = "./../../../../data/Sim_100_asym_01/"
+files = list.files("./../../../../data/Sim_nbh15_asym01_1000_grid0.2_1kiter_025kswap/", pattern = ".csv")
+data_path = "./../../../../data/Sim_nbh15_asym01_1000_grid0.2_1kiter_025kswap/"
 data_list = list()
 
 for (i in files){
   data_list[[i]] <- readr::read_csv(paste0(data_path,i))
 }
 
-#sessionInfo()
 
 #add image id name
 data_list = Map(cbind, data_list, img_id = names(data_list))
@@ -40,79 +38,45 @@ spe = SpatialExperiment(assay=as.data.frame(t(df)),
                         spatialCoords = as.matrix(data[, !(names(data) %in% c("ct", "img_id"))])
 )
 
-
-#spe <- buildSpatialGraph(spe, img_id = "img_id",
-#                         type = "expansion",
-#                         threshold = 20,
-#                         coords = c("x", "y"))
-#spe <- buildSpatialGraph(spe, img_id = "img_id",
-#                         type = "knn",
-#                         k = 5,
-#                         coords = c("x", "y")) 
+# delaunay, knn or distance neighborhood definition
 spe <- buildSpatialGraph(spe, img_id = "img_id",
                          type = "delaunay",
                          coords = c("x", "y"))
 
 assayNames(spe) = "expr"
 
-#spe <- aggregateNeighbors(spe,
-#                          colPairName = "knn_interaction_graph",
-#                          aggregate_by = "expression",
-#                          assay_type = "expr"
-#)
-
-#head(spe$mean_aggregatedExpression)
+#adaps colPairName name depending on neighborhood definition
 
 spe <- aggregateNeighbors(spe,
                           colPairName = "delaunay_interaction_graph",
                           aggregate_by = "metadata",
                           count_by = "ct") 
 
-#spe <- aggregateNeighbors(spe,
- #                         colPairName = "knn_interaction_graph",
- #                         aggregate_by = "metadata",
- #                         count_by = "ct") 
-#head(spe$aggregatedNeighbors)
-
-#out_knn <- countInteractions(spe,
-#                         group_by = "img_id",
-#                         label = "ct",
-#                         method = "histocat",
-#                         #patch_size = 2,
-#                         colPairName = "knn_interaction_graph")
-
 out <- countInteractions(spe,
                              group_by = "img_id",
                              label = "ct",
-                             method = "histocat",
-                             #patch_size = 2,
+                             method = "classic",
                              colPairName = "delaunay_interaction_graph")
 
 out <- testInteractions(spe,
                         group_by = "img_id",
                         label = "ct",
-                        method = "histocat",
+                        method = "classic",
                         colPairName = "delaunay_interaction_graph")
-
-#write.csv(out,file=paste0("./../../output/histocat_output_sim_100_01pref.csv"),row.names = TRUE)
-
 
 ## create standard matrix for comparison
 data = as.data.frame(out) %>% select(from_label, to_label, p_lt, group_by)
-
 data$key = paste(data$from_label, data$to_label, sep = "_")
 data = data %>% select(-c(from_label, to_label))
-
 data = spread(data, key = key, value = p_lt)
-
 
 rownames(data) = data$group_by
 data = data[,-1]
 
-write.csv(data,"./../../../Comparison/results_4ct_cross01/IMCR_histoCAT_delaunay_p_lt_4ct_cross01.csv")
+write.csv(data,"./../../../Comparison/results_4ct_asym_0.2grid_self/IMCR_classic_delaunay_4ct_cross01.csv")
 
+library(pheatmap)
+pheatmap(data)
 
-#ggplot(as.data.frame(out), aes(from_label, to_label, fill = sigval)) +
-#  facet_wrap(~ group_by, nrow = 6) +
-#  geom_tile()
+sessionInfo()
 
