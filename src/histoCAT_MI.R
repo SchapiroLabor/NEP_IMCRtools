@@ -1,5 +1,6 @@
 #################################################
 ### Script for running IMCR tools for MI data ###
+### Schiller et at. 2025.                     ###
 ### Author: Chiara Schiller                   ###
 #################################################
 
@@ -26,8 +27,9 @@ if(nbh_type == "knn")
   colPairName = "knn_interaction_graph"
 if(nbh_type == "delaunay")
   colPairName = "delaunay_interaction_graph"
-# data path
+# data paths
 data_path = "./../../../../../MI_heart_paper/data/cell_table_final.csv"
+output_path = "./../../../Comparison/20250218_results_MI/histoCAT_p_lt_knn5.csv"
 
 ### Data preparation
 # load and prepare data for SpatialExperiment
@@ -92,7 +94,7 @@ rownames(data) = sub(".csv", "", data$group_by)
 data = data[,-1]
 
 ### save output
-write.csv(data,file=paste0("./../../../Comparison/20250218_results_MI/histoCAT_p_lt_knn5.csv"),row.names = TRUE)
+write.csv(data,file=output_path,row.names = TRUE)
 
 ### heatmap
 library(pheatmap)

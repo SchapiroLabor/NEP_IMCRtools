@@ -30,6 +30,8 @@ if(nbh_type == "delaunay")
 # data path either do asymmetric or symmetric simulated data set
 files = list.files("./../../../../data/20250217_sym00_nbh2_1000dim_grid200_300iter_50swaps/", pattern = ".csv")
 data_path = "./../../../../data/20250217_sym00_nbh2_1000dim_grid200_300iter_50swaps/"
+# output
+output_path = "./../../../../../SCNA_thesis/github/Comparison/20250218_results_sym/IMCRclassic_p_lt_delaunay_4ct_self00.csv"
 
 ### Data preparation
 # load simulated data files into list
@@ -96,7 +98,7 @@ data = spread(data, key = key, value = p_lt)
 rownames(data) = sub(".csv", "", data$group_by)
 data = data[,-1]
 
-write.csv(data,file=paste0("./../../../../../SCNA_thesis/github/Comparison/20250218_results_sym/IMCRclassic_p_lt_delaunay_4ct_self00.csv"),row.names = TRUE)
+write.csv(data,file=output_path,row.names = TRUE)
 
 ### Heatmap
 library(pheatmap)
