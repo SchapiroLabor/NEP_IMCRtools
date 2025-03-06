@@ -79,7 +79,7 @@ out <- testInteractions(
                           spe,
                           group_by = "img_id",
                           label = "ct",
-                          method = "classic",
+                          method = method,
                           colPairName = "delaunay_interaction_graph",
                           BPPARAM = BPPARAM
                         )

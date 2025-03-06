@@ -19,7 +19,7 @@ library(BiocParallel)
 # choose from histocat or classic
 method = "histocat"
 # choose nbh def from knn or delaunay
-nbh_type = "delaunay"
+nbh_type = "knn"
 # if knn, choose k
 k_number = 5
 # adapt colPairName name depending on neighborhood definition
