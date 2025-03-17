@@ -31,7 +31,7 @@ if(nbh_type == "delaunay")
 files = list.files("./../../../../data/20250217_sym00_nbh2_1000dim_grid200_300iter_50swaps/", pattern = ".csv")
 data_path = "./../../../../data/20250217_sym00_nbh2_1000dim_grid200_300iter_50swaps/"
 # output
-output_path = "./../../../../../SCNA_thesis/github/Comparison/20250218_results_sym/IMCRclassic_p_lt_delaunay_4ct_self00.csv"
+output_path = "./../../../../../SCNA_thesis/github/Comparison/20250218_results_sym/histoCAT_sigval_delaunay_4ct_self00.csv"
 
 ### Data preparation
 # load simulated data files into list
@@ -86,14 +86,14 @@ out <- testInteractions(
 
 ### Create standard matrix output for comparison
 #replace values that are not significant with False
-out$p_lt[out$sig == FALSE] <- 0.5
+#out$p_lt[out$sig == FALSE] <- 0.5
 
-data = as.data.frame(out) %>% select(from_label, to_label, p_lt, group_by)
+data = as.data.frame(out) %>% select(from_label, to_label, sigval, group_by)
 data <- data.frame(lapply(data, function(x) ifelse(is.na(x) | is.nan(x), 0, x)))
 data = as.data.frame(data)
 data$key = paste(data$from_label, data$to_label, sep = "_")
 data = data %>% select(-c(from_label, to_label))
-data = spread(data, key = key, value = p_lt)
+data = spread(data, key = key, value = sigval)
 
 rownames(data) = sub(".csv", "", data$group_by)
 data = data[,-1]
