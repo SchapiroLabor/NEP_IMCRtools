@@ -107,3 +107,8 @@ pheatmap(data)
 
 sessionInfo()
 
+writeLines(capture.output({
+  print(R.version.string)  
+  sessioninfo::session_info()  
+}), "session_info.txt")
+
