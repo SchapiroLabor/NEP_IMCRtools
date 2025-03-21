@@ -17,7 +17,7 @@ library(BiocParallel)
 
 ### Settings
 # choose from histocat or classic
-method = "histocat"
+method = "classic"
 # choose nbh def from knn or delaunay
 nbh_type = "knn"
 # if knn, choose k
@@ -29,12 +29,11 @@ if(nbh_type == "delaunay")
   colPairName = "delaunay_interaction_graph"
 # data paths
 data_path = "./../../../../../MI_heart_paper/data/cell_table_final.csv"
-output_path = "./../../../Comparison/20250218_results_MI/histoCAT_p_lt_knn5.csv"
+output_path = "./../../../Comparison/20250218_results_MI/classic_sigval_knn5.csv"
 
 ### Data preparation
 # load and prepare data for SpatialExperiment
 data = read_csv(data_path)
-data = data[1:1000,]
 data = data %>% filter(final_cell_type != "exclude")
 
 # create dataframe with random values to pretend to have expression data to generate a Spatial Experiment object
