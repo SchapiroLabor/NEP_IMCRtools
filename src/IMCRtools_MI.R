@@ -81,14 +81,14 @@ out <- testInteractions(
 
 ### create standard matrix for output comparison
 # replace values that are not significant with False
-out$p_lt[out$sig == FALSE] <- 0.5
+#out$p_lt[out$sig == FALSE] <- 0.5
 
-data = as.data.frame(out) %>% select(from_label, to_label, p_lt, group_by)
+data = as.data.frame(out) %>% select(from_label, to_label, sigval, group_by)
 data <- data.frame(lapply(data, function(x) ifelse(is.na(x) | is.nan(x), 0, x)))
 data = as.data.frame(data)
 data$key = paste(data$from_label, data$to_label, sep = "_")
 data = data %>% select(-c(from_label, to_label))
-data = spread(data, key = key, value = p_lt)
+data = spread(data, key = key, value = sigval)
 
 rownames(data) = sub(".csv", "", data$group_by)
 data = data[,-1]
