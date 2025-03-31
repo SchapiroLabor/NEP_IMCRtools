@@ -5,7 +5,7 @@ IMCRtools is an analysis suite for IMC data analysis. It includes a function to 
 
 # Usage
 
-The R package imcRtools (1.4.2) can be installed from Bioconductor
+The R package imcRtools (1.8.0) can be installed from Bioconductor
 
 ```
 if (!requireNamespace("BiocManager", quietly = TRUE))
